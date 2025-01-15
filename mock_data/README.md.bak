@@ -1,0 +1,36 @@
+# Test
+
+This is just a test file to ensure that the table of contents get parsed
+correctly.
+
+## Heading Two
+
+### Heading Three
+
+#### Heading Four
+
+##### Heading Five
+
+```md
+# Bait heading.
+
+## Bait heading.
+
+### Bait heading.
+```
+
+## Heading Two #2
+
+### Heading Three #2
+
+### Heading Three #3
+
+#### Heading Four #2
+
+##### Heading Five #2
+
+##### Heading Five #3
+
+#### Heading Four #3
+
+## Heading Two #3
