@@ -2,6 +2,8 @@
 name = "taboc"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "A table of contents generator for markdown documents written in Rust."
 
 [dependencies]
 clap = { version = "4.5.26", features = ["derive"] }
