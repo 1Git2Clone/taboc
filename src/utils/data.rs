@@ -128,19 +128,29 @@ impl<'a> TableOfContents<'a> {
 
         let mut pos = 0;
         let lookup_header = "## ";
-        for l in BufReader::new(&target_file).lines() {
-            let line = l?;
-            println!("At line: {}", line);
-            if line.starts_with(lookup_header) {
-                if line == Self::TOC_HEADING {
+        let mut line_buf = Vec::new();
+        let mut reader = BufReader::new(&target_file);
+        while let Ok(char_count) = reader.read_until(b'\n', &mut line_buf) {
+            println!("At line: {}", String::from_utf8_lossy(&line_buf));
+
+            if char_count == 0 {
+                break;
+            }
+
+            if line_buf.starts_with(lookup_header.as_bytes()) {
+                if line_buf == Self::TOC_HEADING.as_bytes() {
                     return Err(
                         "There's already a table of contents in the start of this file.".into(),
                     );
                 }
-                pos += lookup_header.len() as u64;
+                // I wish I had an explanation for the off-by-one error here.
+                pos -= lookup_header.len() as u64 - 1;
                 break;
             }
-            pos += line.len() as u64;
+
+            pos += char_count as u64;
+
+            line_buf.clear();
         }
 
         target_file.seek(std::io::SeekFrom::Start(pos))?;
