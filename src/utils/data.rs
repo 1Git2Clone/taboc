@@ -150,7 +150,11 @@ impl<'a> TableOfContents<'a> {
             }
 
             if line_buf.starts_with(lookup_header.as_bytes()) {
-                if line_buf == Self::TOC_HEADING.as_bytes() {
+                let windows_toc = line_buf[line_buf.len().saturating_sub(2)] != b'\r'
+                    && &line_buf[0..line_buf.len().saturating_sub(1)]
+                        == Self::TOC_HEADING.as_bytes();
+                let unix_toc = &line_buf[0..line_buf.len()] == Self::TOC_HEADING.as_bytes();
+                if windows_toc || unix_toc {
                     return Err(
                         "There's already a table of contents in the start of this file.".into(),
                     );
