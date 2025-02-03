@@ -259,7 +259,7 @@ dependencies = [
 
 [[package]]
 name = "taboc"
-version = "0.1.202"
+version = "0.1.203"
 dependencies = [
  "clap",
  "clio",
