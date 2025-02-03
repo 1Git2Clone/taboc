@@ -14,7 +14,11 @@ fn main() -> Result<(), Error> {
 
     let data = TableOfContents::new(&file, args.max_depth);
 
-    data.write_to_file(path, &data.parse()?)?;
+    if args.no_file_update {
+        println!("{}", data.parse()?);
+    } else {
+        data.write_to_file(path, &data.parse()?)?;
+    }
 
     Ok(())
 }
