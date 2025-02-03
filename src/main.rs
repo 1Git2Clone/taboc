@@ -12,7 +12,7 @@ fn main() -> Result<(), Error> {
         return Err(format!("Couldn't find file at: `{}`.", args.input.path()).into());
     };
 
-    let data = TableOfContents::new(&file);
+    let data = TableOfContents::new(&file, args.max_depth);
 
     data.write_to_file(path, &data.parse()?)?;
 

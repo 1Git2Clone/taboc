@@ -11,5 +11,5 @@ pub struct Opt {
     pub update_readme: bool,
     /// Max heading depth for the table of contents.
     #[clap(default_value = "6")]
-    pub max_depth: u32,
+    pub max_depth: usize,
 }

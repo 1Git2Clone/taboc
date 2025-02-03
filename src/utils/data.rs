@@ -6,22 +6,35 @@ use std::{
     path::Path,
 };
 
+/// # Table of contents struct
+///
+/// This is the main struct responsible for reading the README.md file and parsing out the table of
+/// contents with all the proper links in this format:
+///
+/// ```txt
+/// - [Heading 1](#heading-1)
+///   - [Heading 2](#heading-2)
+///     - [Heading 3](#heading-3)
+///     - [Heading 3 2](#heading-3-2)
+///   - [Heading 2 2](#heading-2-2)
+/// ```
 pub struct TableOfContents<'a> {
     file: &'a std::fs::File,
     code_block: Cell<bool>,
+    max_depth: usize,
 }
 
 impl<'a> TableOfContents<'a> {
     const MIN_HEADING: usize = 1;
-    const MAX_HEADING: usize = 6;
     const HEADING_CHAR: char = '#';
     const CODE_BLOCK_STR: &'a str = "```";
     const TOC_HEADING: &'a str = "## Table of contents";
 
-    pub fn new(file: &'a std::fs::File) -> Self {
+    pub fn new(file: &'a std::fs::File, max_depth: usize) -> Self {
         Self {
             file,
             code_block: Cell::new(false),
+            max_depth,
         }
     }
 
@@ -62,8 +75,8 @@ impl<'a> TableOfContents<'a> {
     }
 
     /// Check if a markdown line is valid.
-    fn valid_heading(heading_level: usize, line: &str) -> bool {
-        if !(Self::MIN_HEADING..=Self::MAX_HEADING).contains(&heading_level) {
+    fn valid_heading(&self, heading_level: usize, line: &str) -> bool {
+        if !(Self::MIN_HEADING..=self.max_depth).contains(&heading_level) {
             return false;
         }
         if line.len() <= heading_level || line.chars().nth(heading_level) != Some(' ') {
@@ -99,7 +112,7 @@ impl<'a> TableOfContents<'a> {
                 .take_while(|c| *c == Self::HEADING_CHAR)
                 .count();
 
-            if !Self::valid_heading(heading_count, &line) {
+            if !self.valid_heading(heading_count, &line) {
                 continue;
             }
 
