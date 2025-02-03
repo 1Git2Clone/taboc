@@ -58,7 +58,7 @@ impl<'a> TableOfContents<'a> {
                 continue;
             }
 
-            res.push(c)
+            res.push(c);
         }
 
         res
