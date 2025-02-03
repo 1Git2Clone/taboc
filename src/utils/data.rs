@@ -143,8 +143,6 @@ impl<'a> TableOfContents<'a> {
         let mut line_buf = Vec::new();
         let mut reader = BufReader::new(&target_file);
         while let Ok(char_count) = reader.read_until(b'\n', &mut line_buf) {
-            println!("At line: {}", String::from_utf8_lossy(&line_buf));
-
             if char_count == 0 {
                 break;
             }
