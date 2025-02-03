@@ -1,7 +1,7 @@
 use crate::prelude::*;
 use clap::ArgAction;
 
-/// Table Of Contents arguments.
+/// A table of contents generator for markdown documents written in Rust.
 #[derive(Parser, Clone, Debug)]
 pub struct Opt {
     /// The target file.
