@@ -5,7 +5,7 @@
 [Build Icon]: https://img.shields.io/github/actions/workflow/status/1Git2Clone/taboc/build.yml?branch=main
 [Build Status]: https://github.com/1git2clone/taboc/actions?query=branch%3Amain
 [Docs Icon]: https://docs.rs/taboc/badge.svg
-[Docs]: https://docs.rs/leetcode-trees-rs/latest/taboc
+[Docs]: https://docs.rs/taboc
 [Version Icon]: https://img.shields.io/crates/v/taboc.svg
 [Crate]: https://crates.io/crates/taboc
 [License Icon]: https://img.shields.io/badge/license-MIT-blue.svg
