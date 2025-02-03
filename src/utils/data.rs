@@ -2,8 +2,7 @@ use crate::prelude::*;
 use std::{
     cell::Cell,
     fs::OpenOptions,
-    io::{BufRead, BufReader, Read, Seek},
-    os::unix::fs::FileExt,
+    io::{BufRead, BufReader, Read, Seek, Write},
     path::Path,
 };
 
@@ -156,9 +155,9 @@ impl<'a> TableOfContents<'a> {
         target_file.seek(std::io::SeekFrom::Start(pos))?;
         let mut rest = Vec::<u8>::new();
         target_file.read_to_end(&mut rest)?;
-
-        target_file.write_all_at(input.as_bytes(), pos)?;
-        target_file.write_all_at(&rest, pos.checked_add(input.len() as u64).unwrap_or(pos))?;
+        target_file.seek(std::io::SeekFrom::Start(pos))?;
+        target_file.write_all(input.as_bytes())?;
+        target_file.write_all(&rest)?;
 
         Ok(())
     }
