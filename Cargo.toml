@@ -8,3 +8,6 @@ description = "A table of contents generator for markdown documents written in R
 [dependencies]
 clap = { version = "4.5.26", features = ["derive"] }
 clio = { version = "0.3.5", features = ["clap-parse"] }
+
+[features]
+git = []

@@ -3,3 +3,7 @@ pub mod args;
 
 /// The main logic in this applcation.
 pub mod data;
+
+/// Utilities for checking if the changes from the args are commited or not.
+#[cfg(feature = "git")]
+pub mod git;

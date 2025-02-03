@@ -11,6 +11,10 @@ pub struct Opt {
     /// directly.
     #[clap(long, action=ArgAction::SetTrue)]
     pub no_file_update: bool,
+    /// Use to not consider uncommited git changes.
+    #[cfg(feature = "git")]
+    #[clap(long, action=ArgAction::SetTrue)]
+    pub allow_dirty: bool,
     /// Max heading depth for the table of contents.
     #[clap(long, default_value = "6")]
     pub max_depth: usize,
