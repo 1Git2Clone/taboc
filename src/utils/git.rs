@@ -46,7 +46,7 @@ impl Git {
             && Git::is_file_modified(readme_path).map_err(|e| e.to_string())?
         {
             return Err(format!(
-                "The file has uncommited changes and the {} flag is set to true.",
+                "The file has uncommited changes and the {} flag is set to false.",
                 "--allow-dirty"
             )
             .into());
