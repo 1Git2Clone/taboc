@@ -18,13 +18,13 @@ use std::{
 ///     - [Heading 3 2](#heading-3-2)
 ///   - [Heading 2 2](#heading-2-2)
 /// ```
-pub struct TableOfContents {
+pub struct Taboc {
     pub file: std::fs::File,
     code_block: Cell<bool>,
     max_depth: usize,
 }
 
-impl TableOfContents {
+impl Taboc {
     const MIN_HEADING: usize = 1;
     const HEADING_CHAR: char = '#';
     const CODE_BLOCK_STR: &'static str = "```";

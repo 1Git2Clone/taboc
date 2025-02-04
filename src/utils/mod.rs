@@ -2,7 +2,7 @@
 pub mod args;
 
 /// The main logic in this applcation.
-pub mod data;
+pub mod toc;
 
 /// Utilities for checking if the changes from the args are commited or not.
 #[cfg(feature = "git")]

@@ -2,7 +2,7 @@
 
 pub use crate::{
     app::App,
-    utils::{args::Opt, data::TableOfContents},
+    utils::{args::Opt, toc::Taboc},
 };
 
 pub(crate) use crate::er;
