@@ -1,9 +1,15 @@
-pub type Error = Box<dyn ::core::error::Error + ::core::marker::Send + ::core::marker::Sync>;
+#![allow(unused_imports)]
 
-pub use crate::utils::{args::Opt, data::TableOfContents};
+pub use crate::{
+    app::{App, AppError},
+    utils::{
+        args::Opt,
+        data::{TableOfContents, TabocError},
+    },
+};
 
 #[cfg(feature = "git")]
-pub use crate::utils::git::Git;
+pub use crate::utils::git::{Git, GitError};
 
 pub use clap::Parser;
 pub use clio::Input;

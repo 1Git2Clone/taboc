@@ -5,37 +5,47 @@ use std::{path::Path, process::Command};
 #[repr(transparent)]
 pub struct Git();
 
-/// A descriptive type alias for a specific error that can occur.
-pub type NotAGitRepository = Error;
+#[derive(thiserror::Error, Debug)]
+pub enum GitError {
+    #[error("Not in a git repository.\n{0:?}")]
+    NotInRepository(std::process::Output),
+    #[error("`git` isn't installed.\n{0}")]
+    NotInstalled(std::io::Error),
+    #[error("The file has uncommited changes and the `--allow-dirty` flag isn't set.")]
+    DisallowDirty,
+
+    #[error("Failed to execute `git` command.\n{0:?}")]
+    ExitStatusError(std::io::Error),
+}
 
 impl Git {
     const GIT: &str = "git";
 
     /// Check if `git` is installed.
-    pub fn installed() -> bool {
+    pub fn installed() -> Result<bool, GitError> {
         Command::new(Self::GIT)
             .arg("--version")
             .output()
             .map(|output| output.status.success())
-            .unwrap_or(false)
+            .map_err(GitError::NotInstalled)
     }
 
     /// Check if a file path is modified based on the git repository in `pwd`.
-    pub fn is_file_modified<P>(f: P) -> Result<bool, NotAGitRepository>
+    pub fn is_file_modified<P>(f: P) -> Result<bool, GitError>
     where
         P: AsRef<Path>,
     {
         let output = Command::new(Self::GIT)
             .args(["status", "--porcelain"])
             .arg(f.as_ref())
-            .output();
+            .output()
+            .map_err(GitError::ExitStatusError)?;
 
-        match output {
-            Ok(out) if out.status.success() => {
-                Ok(!String::from_utf8_lossy(&out.stdout).trim().is_empty())
-            }
-            Ok(_) => Ok(false),
-            Err(err) => Err(Box::new(err)),
+        if output.status.success() {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            Ok(!stdout.trim().is_empty())
+        } else {
+            Err(GitError::NotInRepository(output))
         }
     }
 
@@ -43,7 +53,7 @@ impl Git {
     ///
     /// Run all the necessary checks for `--allow-dirty` and returning an error if the file is
     /// uncommited and `git` is installed and the flag isn't set.
-    pub fn run_allow_dirty_checks<P>(args: &Opt, f: P) -> Result<(), Error>
+    pub fn run_allow_dirty_checks<P>(args: &Opt, f: P) -> Result<(), GitError>
     where
         P: AsRef<Path>,
     {

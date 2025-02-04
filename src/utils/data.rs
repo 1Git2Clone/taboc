@@ -1,4 +1,3 @@
-use crate::prelude::*;
 use std::{
     cell::Cell,
     fs::OpenOptions,
@@ -22,6 +21,14 @@ pub struct TableOfContents<'a> {
     file: &'a std::fs::File,
     code_block: Cell<bool>,
     max_depth: usize,
+}
+
+#[derive(thiserror::Error, Debug)]
+pub enum TabocError {
+    #[error("Failed to parse the table of contents.\n{0}")]
+    ParseError(#[from] std::io::Error),
+    #[error("There's already a table of contents in the first heading of the second level of this file.")]
+    AlreadyExists,
 }
 
 impl<'a> TableOfContents<'a> {
@@ -97,7 +104,7 @@ impl<'a> TableOfContents<'a> {
     }
 
     /// Make the table of contents based on a file.
-    pub fn parse(&self) -> Result<String, Error> {
+    pub fn parse(&self) -> Result<String, TabocError> {
         let mut res = format!("\n\n{}\n\n", Self::TOC_HEADING);
 
         for l in BufReader::new(self.file).lines() {
@@ -135,7 +142,7 @@ impl<'a> TableOfContents<'a> {
     ///
     /// NOTE: This ensures that there's no table of contents as the first second-level heading of a
     /// markdown document but it doesn't ensure it if it's located anywhere else.
-    pub fn write_to_file<P: AsRef<Path>>(&self, path: P, input: &str) -> Result<(), Error> {
+    pub fn write_to_file<P: AsRef<Path>>(&self, path: P, input: &str) -> Result<(), TabocError> {
         let mut target_file = OpenOptions::new().read(true).write(true).open(path)?;
 
         let mut pos = 0;
@@ -153,9 +160,7 @@ impl<'a> TableOfContents<'a> {
                         == Self::TOC_HEADING.as_bytes();
                 let unix_toc = &line_buf[0..line_buf.len()] == Self::TOC_HEADING.as_bytes();
                 if windows_toc || unix_toc {
-                    return Err(
-                        "There's already a table of contents in the start of this file.".into(),
-                    );
+                    return Err(TabocError::AlreadyExists);
                 }
                 // I wish I had an explanation for the off-by-one error here.
                 pos -= lookup_header.len() as u64 - 1;

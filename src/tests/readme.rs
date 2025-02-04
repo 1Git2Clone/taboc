@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 #[test]
-fn test_mock_input_file() -> Result<(), Error> {
+fn test_mock_input_file() -> Result<(), TabocError> {
     let expected = "
 
 ## Table of contents
