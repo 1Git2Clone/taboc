@@ -5,9 +5,6 @@ use std::fs::File;
 
 use prelude::*;
 
-#[cfg(feature = "git")]
-use utils::git::Git;
-
 fn main() -> Result<(), Error> {
     let args = Opt::parse();
     let path = args.input.path().path();
