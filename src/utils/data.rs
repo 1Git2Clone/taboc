@@ -18,19 +18,19 @@ use std::{
 ///     - [Heading 3 2](#heading-3-2)
 ///   - [Heading 2 2](#heading-2-2)
 /// ```
-pub struct TableOfContents<'a> {
-    file: &'a std::fs::File,
+pub struct TableOfContents {
+    pub file: std::fs::File,
     code_block: Cell<bool>,
     max_depth: usize,
 }
 
-impl<'a> TableOfContents<'a> {
+impl TableOfContents {
     const MIN_HEADING: usize = 1;
     const HEADING_CHAR: char = '#';
-    const CODE_BLOCK_STR: &'a str = "```";
-    const TOC_HEADING: &'a str = "## Table of contents";
+    const CODE_BLOCK_STR: &'static str = "```";
+    const TOC_HEADING: &'static str = "## Table of contents";
 
-    pub fn new(file: &'a std::fs::File, max_depth: usize) -> Self {
+    pub fn new(file: std::fs::File, max_depth: usize) -> Self {
         Self {
             file,
             code_block: Cell::new(false),
@@ -100,7 +100,7 @@ impl<'a> TableOfContents<'a> {
     pub fn parse(&self) -> Result<String, Error> {
         let mut res = format!("\n\n{}\n\n", Self::TOC_HEADING);
 
-        for l in BufReader::new(self.file).lines() {
+        for l in BufReader::new(&self.file).lines() {
             let line = l?;
 
             if self.is_in_code_block(&line) {

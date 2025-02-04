@@ -22,7 +22,7 @@ fn test_mock_input_file() -> Result<(), Error> {
 
     let file = std::fs::File::open(std::env::current_dir()?.join("mock_data/README.md"))?;
 
-    assert_eq!(expected, TableOfContents::new(&file, 6).parse()?);
+    assert_eq!(expected, TableOfContents::new(file, 6).parse()?);
 
     Ok(())
 }

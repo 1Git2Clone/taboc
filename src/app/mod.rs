@@ -35,7 +35,7 @@ use crate::prelude::*;
 pub struct App<'a> {
     pub args: Cow<'a, Opt>,
     pub path: PathBuf,
-    pub file: std::fs::File,
+    pub table_of_contents: TableOfContents,
 }
 
 impl<'a> App<'a> {
@@ -43,35 +43,32 @@ impl<'a> App<'a> {
     pub fn init() -> Result<Self, Error> {
         let args: Cow<'a, Opt> = Cow::Owned(Opt::parse());
         let path = args.input.path().path().to_path_buf();
-        let file = File::open(&path)?;
+        let table_of_contents = TableOfContents::new(File::open(&path)?, args.max_depth);
 
-        Ok(Self { args, path, file })
+        Ok(Self {
+            args,
+            path,
+            table_of_contents,
+        })
     }
 
     /// Make the `App` struct from pre-existing `args`.
     #[allow(dead_code)]
     pub fn from_args(args: &'a Opt) -> Result<Self, Error> {
         let path = args.input.path().path().to_path_buf();
-        let file = File::open(&path)?;
+        let table_of_contents = TableOfContents::new(File::open(&path)?, args.max_depth);
 
         Ok(Self {
             args: Cow::Borrowed(args),
             path,
-            file,
+            table_of_contents,
         })
-    }
-
-    /// Get the table of contents.
-    pub fn get_taboc(&'a self) -> TableOfContents<'a> {
-        TableOfContents::new(&self.file, self.args.max_depth)
     }
 
     /// Run the main application logic.
     pub fn run(&self) -> Result<(), Error> {
-        let taboc = self.get_taboc();
-
         if self.args.no_file_update {
-            println!("{}", taboc.parse()?);
+            println!("{}", self.table_of_contents.parse()?);
             return Ok(());
         }
 
@@ -80,7 +77,8 @@ impl<'a> App<'a> {
             Git::run_allow_dirty_checks(&self.args, &self.path)?;
         }
 
-        taboc.write_to_file(&self.path, &taboc.parse()?)?;
+        self.table_of_contents
+            .write_to_file(&self.path, &self.table_of_contents.parse()?)?;
 
         Ok(())
     }
