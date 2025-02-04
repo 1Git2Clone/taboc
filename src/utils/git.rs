@@ -37,13 +37,17 @@ impl Git {
         }
     }
 
-    pub fn run_allow_dirty_checks<P>(args: &Opt, readme_path: P) -> Result<(), Error>
+    /// # `--allow-dirty` checks.
+    ///
+    /// Run all the necessary checks for `--allow-dirty` and returning an error if the file is
+    /// uncommited and `git` is installed and the flag isn't set.
+    pub fn run_allow_dirty_checks<P>(args: &Opt, f: P) -> Result<(), Error>
     where
         P: AsRef<Path>,
     {
         if !args.allow_dirty
             && Git::installed()
-            && Git::is_file_modified(readme_path).map_err(|e| e.to_string())?
+            && Git::is_file_modified(f).map_err(|e| e.to_string())?
         {
             return Err(format!(
                 "The file has uncommited changes and the {} flag is set to false.",
