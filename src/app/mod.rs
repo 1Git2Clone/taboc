@@ -4,7 +4,7 @@ Setting up the application is as simple as:
 ```rust
 use taboc::prelude::*;
 
-fn main() -> Result<(), AppError> {
+fn main() -> Result<(), Error> {
     // The error assert is done because the project already has a table of contents.
     assert!(App::init()?.run().is_err());
 
@@ -17,7 +17,7 @@ Alternatively, you can also make the app from existing args too:
 ```rust
 use taboc::prelude::*;
 
-fn main() -> Result<(), AppError> {
+fn main() -> Result<(), Error> {
     let args = Opt::parse();
 
     // The error assert is done because the project already has a table of contents.
@@ -38,38 +38,21 @@ pub struct App<'a> {
     pub file: std::fs::File,
 }
 
-#[derive(thiserror::Error, Debug)]
-pub enum AppError {
-    #[error("Couldn't find file at: `{0}`")]
-    FailedToOpenInputFile(PathBuf),
-
-    #[error("Table of contents error.\n{0}")]
-    TabocError(#[from] TabocError),
-
-    #[cfg(feature = "git")]
-    #[error("Git error.\n{0}")]
-    GitError(#[from] GitError),
-}
-
 impl<'a> App<'a> {
     /// Make the `App` struct.
-    pub fn init() -> Result<Self, AppError> {
+    pub fn init() -> Result<Self, Error> {
         let args: Cow<'a, Opt> = Cow::Owned(Opt::parse());
         let path = args.input.path().path().to_path_buf();
-        let Ok(file) = File::open(&path) else {
-            return Err(AppError::FailedToOpenInputFile(path));
-        };
+        let file = File::open(&path)?;
 
         Ok(Self { args, path, file })
     }
 
     /// Make the `App` struct from pre-existing `args`.
     #[allow(dead_code)]
-    pub fn from_args(args: &'a Opt) -> Result<Self, AppError> {
+    pub fn from_args(args: &'a Opt) -> Result<Self, Error> {
         let path = args.input.path().path().to_path_buf();
-        let Ok(file) = File::open(&path) else {
-            return Err(AppError::FailedToOpenInputFile(path));
-        };
+        let file = File::open(&path)?;
 
         Ok(Self {
             args: Cow::Borrowed(args),
@@ -84,7 +67,7 @@ impl<'a> App<'a> {
     }
 
     /// Run the main application logic.
-    pub fn run(&self) -> Result<(), AppError> {
+    pub fn run(&self) -> Result<(), Error> {
         let taboc = self.get_taboc();
 
         if self.args.no_file_update {
