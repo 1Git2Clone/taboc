@@ -4,7 +4,9 @@ use std::{path::Path, process::Command};
 /// Utility functions that check for git information.
 #[repr(transparent)]
 pub struct Git();
-pub type NotAGitRepository = Box<dyn std::error::Error>;
+
+/// A descriptive type alias for a specific error that can occur.
+pub type NotAGitRepository = Error;
 
 impl Git {
     const GIT: &str = "git";
@@ -45,10 +47,7 @@ impl Git {
     where
         P: AsRef<Path>,
     {
-        if !args.allow_dirty
-            && Git::installed()
-            && Git::is_file_modified(f).map_err(|e| e.to_string())?
-        {
+        if !args.allow_dirty && Git::installed() && Git::is_file_modified(f)? {
             return Err(format!(
                 "The file has uncommited changes and the {} flag is set to false.",
                 "--allow-dirty"
