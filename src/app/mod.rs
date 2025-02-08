@@ -73,7 +73,8 @@ impl<'a> App<'a> {
             Git::run_allow_dirty_checks(&self.args, &self.path)?;
         }
 
-        self.taboc.write_to_file(&self.path, &self.taboc.parse()?)?;
+        self.taboc
+            .write_to_file(&self.path, &self.taboc.parse()?, self.args.update_existing)?;
 
         Ok(())
     }

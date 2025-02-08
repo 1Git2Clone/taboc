@@ -7,6 +7,9 @@ pub struct Opt {
     /// The target file.
     #[clap(value_parser, default_value = "./README.md")]
     pub input: Input,
+    /// Use to override the existing table of contents in [INPUT].
+    #[clap(long, action=ArgAction::SetTrue)]
+    pub update_existing: bool,
     /// Use to only print the table of contents to stdout. If not set it'll try to update the file
     /// directly.
     #[clap(long, action=ArgAction::SetTrue)]

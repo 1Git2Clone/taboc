@@ -116,6 +116,10 @@ impl Taboc {
                 continue;
             }
 
+            if line.starts_with(Self::TOC_HEADING) {
+                continue;
+            }
+
             let heading = line
                 .chars()
                 .skip(heading_count)
@@ -135,13 +139,21 @@ impl Taboc {
     ///
     /// NOTE: This ensures that there's no table of contents as the first second-level heading of a
     /// markdown document but it doesn't ensure it if it's located anywhere else.
-    pub fn write_to_file<P: AsRef<Path>>(&self, path: P, input: &str) -> Result<(), Error> {
+    pub fn write_to_file<P: AsRef<Path>>(
+        &self,
+        path: P,
+        input: &str,
+        update_existing: bool,
+    ) -> Result<(), Error> {
         let mut target_file = OpenOptions::new().read(true).write(true).open(path)?;
 
         let mut pos = 0;
         let lookup_header = "## ";
         let mut line_buf = Vec::new();
         let mut reader = BufReader::new(&target_file);
+
+        let mut already_exists = false;
+
         while let Ok(char_count) = reader.read_until(b'\n', &mut line_buf) {
             if char_count == 0 {
                 break;
@@ -152,10 +164,12 @@ impl Taboc {
                     && &line_buf[0..line_buf.len().saturating_sub(1)]
                         == Self::TOC_HEADING.as_bytes();
                 let unix_toc = &line_buf[0..line_buf.len()] == Self::TOC_HEADING.as_bytes();
-                if windows_toc || unix_toc {
+                if !update_existing && (windows_toc || unix_toc) {
                     return Err(
                         anyhow!("There's already a table of contents in the first heading of the second level of this file.")
                     );
+                } else if windows_toc || unix_toc {
+                    already_exists = true;
                 }
                 // I wish I had an explanation for the off-by-one error here.
                 pos -= lookup_header.len() as u64 - 1;
@@ -170,6 +184,38 @@ impl Taboc {
         target_file.seek(std::io::SeekFrom::Start(pos))?;
         let mut rest = Vec::<u8>::new();
         target_file.read_to_end(&mut rest)?;
+        target_file.seek(std::io::SeekFrom::Start(pos))?;
+
+        if already_exists {
+            let mut reader = BufReader::new(&target_file);
+            let mut drain_pos = 0;
+
+            // reads [`Self::TOC_HEADING`] twice. Log each line to understand why it's like this.
+            let mut end_heading_count = 3;
+            let mut last_line_char_count = 0;
+
+            while let Ok(char_count) = reader.read_until(b'\n', &mut line_buf) {
+                // println!("LINE: {}", String::from_utf8_lossy(&line_buf));
+
+                if line_buf.starts_with(b"#") {
+                    end_heading_count -= 1;
+                } else if end_heading_count == 0 {
+                    drain_pos -= last_line_char_count;
+                    break;
+                }
+                if line_buf.trim_ascii().is_empty() && end_heading_count == 1 {
+                    drain_pos -= char_count;
+                }
+
+                drain_pos += char_count;
+
+                line_buf.clear();
+                last_line_char_count = char_count;
+            }
+
+            rest.drain(..drain_pos);
+        }
+
         target_file.seek(std::io::SeekFrom::Start(pos))?;
         target_file.write_all(input.as_bytes())?;
         target_file.write_all(&rest)?;
