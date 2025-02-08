@@ -5,8 +5,6 @@ pub use crate::{
     utils::{args::Opt, toc::Taboc},
 };
 
-pub(crate) use crate::er;
-
 #[cfg(feature = "git")]
 pub use crate::utils::git::Git;
 

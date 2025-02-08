@@ -1,5 +1,4 @@
 mod app;
-mod macros;
 mod prelude;
 mod utils;
 

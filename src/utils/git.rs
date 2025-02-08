@@ -30,7 +30,7 @@ impl Git {
             let stdout = String::from_utf8_lossy(&output.stdout);
             Ok(!stdout.trim().is_empty())
         } else {
-            Err(er!("Not in a git repository.\n{:?}", output))
+            Err(anyhow!("Not in a git repository.\n{:?}", output))
         }
     }
 

@@ -90,6 +90,3 @@ pub mod utils;
 #[doc(hidden)]
 #[cfg(test)]
 mod tests;
-
-#[doc(hidden)]
-mod macros;
