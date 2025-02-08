@@ -68,8 +68,8 @@ impl<'a> App<'a> {
             return Ok(());
         }
 
-        #[cfg(feature = "git")]
-        {
+        if !self.args.no_vcs {
+            #[cfg(feature = "git")]
             Git::run_allow_dirty_checks(&self.args, &self.path)?;
         }
 

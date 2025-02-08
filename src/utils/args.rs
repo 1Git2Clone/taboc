@@ -18,6 +18,10 @@ pub struct Opt {
     #[cfg(feature = "git")]
     #[clap(long, action=ArgAction::SetTrue)]
     pub allow_dirty: bool,
+    /// Don't check for changes on your Version Control System.
+    #[cfg(feature = "git")]
+    #[clap(long, action=ArgAction::SetTrue)]
+    pub no_vcs: bool,
     /// Max heading depth for the table of contents.
     #[clap(long, default_value = "6")]
     pub max_depth: usize,
