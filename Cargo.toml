@@ -1,6 +1,6 @@
 [package]
 name = "taboc"
-version = "0.2.1"
+version = "0.2.101"
 edition = "2021"
 license = "MIT"
 description = "A table of contents generator for markdown documents written in Rust."

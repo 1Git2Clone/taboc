@@ -265,7 +265,7 @@ dependencies = [
 
 [[package]]
 name = "taboc"
-version = "0.2.1"
+version = "0.2.101"
 dependencies = [
  "anyhow",
  "clap",
