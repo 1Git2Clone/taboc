@@ -240,6 +240,8 @@ impl Taboc {
         target_file.write_all(input.as_bytes())?;
         #[cfg(feature = "memmap2")]
         target_file.write_all(rest)?;
+        #[cfg(feature = "memmap2")]
+        rest_map.flush()?;
         #[cfg(not(feature = "memmap2"))]
         target_file.write_all(&rest)?;
 
