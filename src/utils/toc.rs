@@ -1,10 +1,18 @@
+#[cfg(feature = "memmap2")]
+use memmap2::MmapMut;
+#[cfg(feature = "memmap2")]
+use std::cmp::min;
+
 use crate::prelude::*;
 use std::{
     cell::Cell,
     fs::OpenOptions,
-    io::{BufRead, BufReader, Read, Seek, Write},
+    io::{BufRead, BufReader, Seek, Write},
     path::Path,
 };
+
+#[cfg(not(feature = "memmap2"))]
+use std::io::Read;
 
 /// # Table of contents struct
 ///
@@ -182,8 +190,15 @@ impl Taboc {
         }
 
         target_file.seek(std::io::SeekFrom::Start(pos))?;
+        #[cfg(feature = "memmap2")]
+        let rest_map = unsafe { MmapMut::map_mut(&target_file)? };
+        #[cfg(feature = "memmap2")]
+        let mut rest = &rest_map[..];
+        #[cfg(not(feature = "memmap2"))]
         let mut rest = Vec::<u8>::new();
+        #[cfg(not(feature = "memmap2"))]
         target_file.read_to_end(&mut rest)?;
+
         target_file.seek(std::io::SeekFrom::Start(pos))?;
 
         if already_exists {
@@ -213,11 +228,19 @@ impl Taboc {
                 last_line_char_count = char_count;
             }
 
+            #[cfg(feature = "memmap2")]
+            {
+                rest = &rest_map[min(drain_pos - 1, rest_map.len() - 1)..];
+            }
+            #[cfg(not(feature = "memmap2"))]
             rest.drain(..drain_pos);
         }
 
         target_file.seek(std::io::SeekFrom::Start(pos))?;
         target_file.write_all(input.as_bytes())?;
+        #[cfg(feature = "memmap2")]
+        target_file.write_all(rest)?;
+        #[cfg(not(feature = "memmap2"))]
         target_file.write_all(&rest)?;
 
         Ok(())
