@@ -1,0 +1,10 @@
+[package]
+name = "generate_markdown"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# `char::from`: be743d53d3404c9b13486c266b3b982fdd6c38ed | ~0.81s
+# unsafe `String` as mut vec extend: 4148dc7b01bb7d5b62817c660d64620652242c91 | ~0.61s
+# Branchless jump (using `char::from`): 4148dc7b01bb7d5b62817c660d64620652242c91 | ~0.81s
+rand = { git = "https://github.com/1Git2Clone/rand", rev = "4148dc7b01bb7d5b62817c660d64620652242c91" }
