@@ -75,7 +75,7 @@ dependencies = [
 [[package]]
 name = "rand"
 version = "0.9.0"
-source = "git+https://github.com/1Git2Clone/rand?rev=4148dc7b01bb7d5b62817c660d64620652242c91#4148dc7b01bb7d5b62817c660d64620652242c91"
+source = "git+https://github.com/1Git2Clone/rand?branch=alphabetic-distr#c9093cbf5bfdaf377ccd10148ac304dc46c08225"
 dependencies = [
  "rand_chacha",
  "rand_core",
@@ -85,7 +85,7 @@ dependencies = [
 [[package]]
 name = "rand_chacha"
 version = "0.9.0"
-source = "git+https://github.com/1Git2Clone/rand?rev=4148dc7b01bb7d5b62817c660d64620652242c91#4148dc7b01bb7d5b62817c660d64620652242c91"
+source = "git+https://github.com/1Git2Clone/rand?branch=alphabetic-distr#c9093cbf5bfdaf377ccd10148ac304dc46c08225"
 dependencies = [
  "ppv-lite86",
  "rand_core",
@@ -94,7 +94,7 @@ dependencies = [
 [[package]]
 name = "rand_core"
 version = "0.9.0"
-source = "git+https://github.com/1Git2Clone/rand?rev=4148dc7b01bb7d5b62817c660d64620652242c91#4148dc7b01bb7d5b62817c660d64620652242c91"
+source = "git+https://github.com/1Git2Clone/rand?branch=alphabetic-distr#c9093cbf5bfdaf377ccd10148ac304dc46c08225"
 dependencies = [
  "getrandom",
  "zerocopy 0.8.17",
