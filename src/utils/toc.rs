@@ -50,7 +50,23 @@ impl Taboc {
     fn make_link(heading_name: &str) -> String {
         let mut res = String::with_capacity(heading_name.len());
 
+        /// Most are based on
+        /// [RFC3986#section-2.2](https://www.rfc-editor.org/rfc/rfc3986#section-2.2) with some
+        /// additional ones like: \`, `'`, `~`, `{` and `}`.
+        ///
+        /// NOTE: It's possible that not all excludable characters are covered. If you encounter a
+        /// issue with a missed one then feel free to post an issue on
+        /// [GitHub](https://github.com/1Git2Clone/taboc/issues).
+        const IGNORED_CHARACTERS: &[char] = &[
+            '+', ':', ';', '.', ',', '{', '}', '"', '@', '#', '>', '<', '[', ']', '|', '/', '?',
+            '!', '$', '*', '=', '&', '\'', '(', ')', '~',
+        ];
+
         for c in heading_name.chars() {
+            if IGNORED_CHARACTERS.contains(&c) {
+                continue;
+            }
+
             if c == ' ' {
                 res.push('-');
                 continue;
