@@ -285,3 +285,20 @@ impl Taboc {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Taboc;
+
+    #[test]
+    fn percent_encode() {
+        assert_eq!(Taboc::percent_encode('😁'), "%F0%9F%98%81");
+        assert_eq!(Taboc::percent_encode('♊'), "%E2%99%8A");
+        assert_eq!(Taboc::percent_encode('⏳'), "%E2%8F%B3");
+        assert_eq!(Taboc::percent_encode('❌'), "%E2%9D%8C");
+        assert_eq!(Taboc::percent_encode('⏪'), "%E2%8F%AA");
+        assert_eq!(Taboc::percent_encode('⛪'), "%E2%9B%AA");
+        assert_eq!(Taboc::percent_encode('⟣'), "%E2%9F%A3");
+        assert_eq!(Taboc::percent_encode('⛟'), "%E2%9B%9F");
+    }
+}
