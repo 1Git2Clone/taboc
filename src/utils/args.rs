@@ -1,3 +1,9 @@
+/*!
+Contains the CLI Argument Parsing struct ([`Opt`]).
+
+Refer to the [`clap`] and [`clio`] crates.
+*/
+
 use crate::prelude::*;
 use clap::ArgAction;
 
