@@ -46,6 +46,22 @@ impl Taboc {
         }
     }
 
+    /// See [`RFC3986`](https://www.rfc-editor.org/rfc/rfc3986).
+    fn percent_encode(c: char) -> String {
+        let mut utf8_bytes: [u8; 4] = [0u8; 4];
+        let bytes = c.encode_utf8(&mut utf8_bytes);
+        let mut encoded = String::with_capacity(bytes.len() * 3);
+
+        for byte in utf8_bytes {
+            if byte == 0 {
+                break;
+            }
+            encoded.push_str(&format!("%{:02X}", byte));
+        }
+
+        encoded
+    }
+
     /// Make a Table of contents line based on the current heading level.
     fn make_link(heading_name: &str) -> String {
         let mut res = String::with_capacity(heading_name.len());
@@ -79,6 +95,11 @@ impl Taboc {
 
             if c.is_uppercase() {
                 res.push_str(&c.to_lowercase().to_string());
+                continue;
+            }
+
+            if !c.is_alphanumeric() {
+                res.push_str(&Self::percent_encode(c));
                 continue;
             }
 
