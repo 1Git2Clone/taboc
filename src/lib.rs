@@ -77,10 +77,26 @@
 #![deny(clippy::string_to_string, reason = "Redundant.")]
 #![deny(clippy::get_unwrap, reason = "Prefer direct indexing for conciseness.")]
 
+/*!
+If you wish to use this project as a library, all you need to have as a script is:
+
+```
+std::env::set_var("RUSTDOC_TEST_ARGS", "--no-file-update");
+
+use taboc::app::App;
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    App::init()?.run()?;
+
+    Ok(())
+}
+```
+*/
+
 /// The user-facing logic of the program.
 pub mod app;
 
-/// Crate-level re-exports
+/// Re-exports. Mainly for internal usage. Could be ambiguous.
 pub mod prelude;
 
 /// Crate utilities. Can be used independently if needed.

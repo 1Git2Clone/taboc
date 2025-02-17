@@ -1,4 +1,10 @@
-#![allow(unused_imports)]
+#![allow(unused_imports, reason = "Potential external usage.")]
+/*!
+Re-exports for potential external use.
+
+WARN: This re-exports potentially ambiguous types like [`anyhow::Error`], [`clap::Parser`] and
+[`crate::app::App`].
+*/
 
 pub use crate::{
     app::App,
