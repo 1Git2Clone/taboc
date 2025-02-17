@@ -11,7 +11,7 @@
 [License Icon]: https://img.shields.io/badge/license-MIT-blue.svg
 [LICENSE]: LICENSE
 
-A table of contents generator for markdown documents written in Rust.
+A table of contents generator for markdown documents.
 
 ## Table of contents
 
