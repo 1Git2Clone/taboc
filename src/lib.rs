@@ -78,6 +78,8 @@
 #![deny(clippy::get_unwrap, reason = "Prefer direct indexing for conciseness.")]
 
 /*!
+# Minimal example
+
 If you wish to use this project as a library, all you need to have as a script is:
 
 ```
